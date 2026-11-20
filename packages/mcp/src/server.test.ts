@@ -23,13 +23,23 @@ async function kutsu(name: string, args: Record<string, unknown>) {
 }
 
 describe("MCP-työkalut", () => {
-  it("julkaisee kolme työkalua", async () => {
+  it("julkaisee neljä työkalua", async () => {
     const { tools } = await client.listTools();
     expect(tools.map((t) => t.name).sort()).toEqual([
       "listaa_hakemukset",
+      "muistuta",
       "tallenna_hakemus",
       "tallenna_paikka",
     ]);
+  });
+
+  it("muistuta nostaa esiin lähestyvän deadlinen", async () => {
+    const huomenna = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+    await kutsu("tallenna_paikka", { yritys: "Pian", otsikko: "x", deadline: huomenna });
+    const m = await kutsu("muistuta", {});
+    expect(m.data.deadlinet).toHaveLength(1);
+    expect(m.data.deadlinet[0].yritys).toBe("Pian");
+    expect(m.data.seuranta).toEqual([]);
   });
 
   it("tallentaa paikan, luo hakemuksen ja siirtää sen tilaan haettu", async () => {

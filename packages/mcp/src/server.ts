@@ -8,6 +8,7 @@ import {
   listaaHakemukset,
   luoHakemus,
   luoPaikka,
+  muistutukset,
   siirraTila,
   type Db,
 } from "@tyonhakuapuri/core";
@@ -90,6 +91,36 @@ export function luoPalvelin(db: Db): McpServer {
       annotations: { readOnlyHint: true },
     },
     ({ tila }) => suorita(() => listaaHakemukset(db, tila)),
+  );
+
+  server.registerTool(
+    "muistuta",
+    {
+      description:
+        "Kertoo, mihin kannattaa tarttua nyt: (1) deadlinet, jotka päättyvät pian ja joihin ei ole vielä haettu, " +
+        "(2) haetut hakemukset, joihin ei ole tullut päivityksiä pitkään aikaan ja joihin voisi ottaa yhteyttä, " +
+        "(3) itse asetetut seuraavat toimenpiteet, jotka erääntyvät tai ovat myöhässä. " +
+        "Kutsu tätä keskustelun alussa tai kun käyttäjä kysyy 'mitä pitäisi tehdä'. Ei muuta mitään.",
+      inputSchema: {
+        paivia_eteenpain: z
+          .number()
+          .int()
+          .min(0)
+          .optional()
+          .describe("Kuinka monta päivää eteenpäin katsotaan. Oletus 7."),
+        seuranta_paivia: z
+          .number()
+          .int()
+          .min(0)
+          .optional()
+          .describe("Montako päivää haettu hakemus saa olla hiljaa ennen muistutusta. Oletus 7."),
+      },
+      annotations: { readOnlyHint: true },
+    },
+    ({ paivia_eteenpain, seuranta_paivia }) =>
+      suorita(() =>
+        muistutukset(db, { paiviaEteenpain: paivia_eteenpain, seurantaPaivia: seuranta_paivia }),
+      ),
   );
 
   return server;

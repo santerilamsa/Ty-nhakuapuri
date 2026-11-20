@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.log
+.env
+.env.*
+!.env.example
+
+# Paikallinen tietokanta
+*.db
+*.db-journal
+*.sqlite
+data/
+
+.DS_Store

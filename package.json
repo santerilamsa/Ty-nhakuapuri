@@ -1,0 +1,14 @@
+{
+  "name": "tyonhakuapuri",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Harjoittelupaikkojen ja hakemusten seuranta: MCP-palvelin + kanban-frontend",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}

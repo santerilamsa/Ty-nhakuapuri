@@ -6,9 +6,10 @@ interface Props {
   id: number;
   onSulje: () => void;
   onMuuttui: () => void;
+  onPoista: () => void;
 }
 
-export function Paneeli({ id, onSulje, onMuuttui }: Props) {
+export function Paneeli({ id, onSulje, onMuuttui, onPoista }: Props) {
   const [h, setH] = useState<HakemusTiedot | null>(null);
   const [virhe, setVirhe] = useState<string | null>(null);
   const [muistiinpano, setMuistiinpano] = useState("");
@@ -114,6 +115,14 @@ export function Paneeli({ id, onSulje, onMuuttui }: Props) {
             />
             <button className="rounded bg-slate-800 px-3 py-1 text-sm text-white">Lisää</button>
           </form>
+
+          <button
+            type="button"
+            onClick={onPoista}
+            className="mt-4 self-start rounded border border-red-300 px-3 py-1 text-sm text-red-700 hover:bg-red-50"
+          >
+            Poista hakemus
+          </button>
 
           <h3 className="mt-4 border-t pt-3 text-sm font-semibold">Tapahtumahistoria</h3>
           <ul className="mt-2 space-y-2 text-sm">

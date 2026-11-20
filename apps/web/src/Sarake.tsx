@@ -8,9 +8,10 @@ interface Props {
   /** False kun vedettävää korttia ei saa pudottaa tähän sarakkeeseen. */
   sallittu: boolean;
   onValitse: (id: number) => void;
+  onPoista: (hakemus: HakemusRivi) => void;
 }
 
-export function Sarake({ tila, hakemukset, sallittu, onValitse }: Props) {
+export function Sarake({ tila, hakemukset, sallittu, onValitse, onPoista }: Props) {
   const { setNodeRef, isOver } = useDroppable({ id: tila, disabled: !sallittu });
   const tausta = !sallittu ? "opacity-40" : isOver ? "bg-blue-100 ring-2 ring-blue-400" : "bg-slate-200/60";
   return (
@@ -21,7 +22,7 @@ export function Sarake({ tila, hakemukset, sallittu, onValitse }: Props) {
       </h2>
       <div className="flex flex-1 flex-col gap-2 overflow-y-auto">
         {hakemukset.map((h) => (
-          <Kortti key={h.id} hakemus={h} onValitse={onValitse} />
+          <Kortti key={h.id} hakemus={h} onValitse={onValitse} onPoista={onPoista} />
         ))}
       </div>
     </section>

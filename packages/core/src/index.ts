@@ -7,6 +7,7 @@ export { luoPaikka, haePaikka, etsiPaikat, type UusiPaikka, type PaikkaHaku } fr
 export { muistutukset, type Muistutukset, type MuistutusAsetukset } from "./muistutukset.js";
 export {
   luoHakemus,
+  poistaHakemus,
   haeHakemus,
   siirraTila,
   lisaaMuistiinpano,

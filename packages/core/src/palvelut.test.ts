@@ -9,6 +9,7 @@ import {
   luoHakemus,
   luoPaikka,
   openDb,
+  poistaHakemus,
   siirraTila,
   voiSiirtya,
   type Db,
@@ -67,6 +68,18 @@ describe("hakemukset", () => {
     expect(h2.id).toBe(h1.id);
     expect(h1.tila).toBe("kiinnostaa");
     expect(haeTapahtumat(db, h1.id)).toHaveLength(1);
+  });
+
+  it("poistaa hakemuksen, paikan ja historian; saman url:n voi lisätä uudelleen", () => {
+    const url = "https://acme.fi/1";
+    const p = luoPaikka(db, { yritys: "Acme", otsikko: "Harjoittelija", url });
+    const h = luoHakemus(db, p.id);
+    poistaHakemus(db, h.id);
+    expect(listaaHakemukset(db)).toHaveLength(0);
+    expect(etsiPaikat(db)).toHaveLength(0);
+    expect(db.prepare("SELECT COUNT(*) AS n FROM tapahtuma").get()).toEqual({ n: 0 });
+    expect(() => poistaHakemus(db, h.id)).toThrow(SovellusVirhe);
+    expect(() => luoPaikka(db, { yritys: "Acme", otsikko: "Harjoittelija", url })).not.toThrow();
   });
 
   it("siirtää tilaa, asettaa haettu_pvm ja kirjaa historian", () => {

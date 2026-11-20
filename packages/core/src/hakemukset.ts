@@ -20,6 +20,15 @@ export function haeHakemus(db: Db, id: number): Hakemus {
   return rivi;
 }
 
+/**
+ * Poistaa hakemuksen kokonaan: myös paikan ja tapahtumahistorian (ON DELETE CASCADE),
+ * jotta sama ilmoitus (url) voidaan lisätä myöhemmin uudelleen.
+ */
+export function poistaHakemus(db: Db, id: number): void {
+  const hakemus = haeHakemus(db, id);
+  db.prepare("DELETE FROM paikka WHERE id = ?").run(hakemus.paikka_id);
+}
+
 /** Luo hakemuksen paikalle. Jos hakemus on jo olemassa, palautetaan se sellaisenaan. */
 export function luoHakemus(db: Db, paikkaId: number, tila: Tila = "kiinnostaa"): Hakemus {
   if (!TILAT.includes(tila)) {

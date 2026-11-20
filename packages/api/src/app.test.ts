@@ -15,7 +15,8 @@ async function pyyda(metodi: string, polku: string, runko?: unknown) {
     headers: { "content-type": "application/json" },
     body: runko === undefined ? undefined : JSON.stringify(runko),
   });
-  return { status: res.status, data: await res.json() };
+  const teksti = await res.text(); // 204-vastauksella ei ole runkoa
+  return { status: res.status, data: teksti ? JSON.parse(teksti) : null };
 }
 
 async function luoPaikkaJaHakemus(tila?: string) {
@@ -59,6 +60,14 @@ describe("REST API", () => {
     expect(res.data.tila).toBe("haettu");
     const lista = await pyyda("GET", "/api/hakemukset?tila=haettu");
     expect(lista.data).toHaveLength(1);
+  });
+
+  it("DELETE poistaa hakemuksen ja paikan; tuntematon → 404", async () => {
+    const { hakemus, paikka } = await luoPaikkaJaHakemus();
+    expect((await pyyda("DELETE", `/api/hakemukset/${hakemus.id}`)).status).toBe(204);
+    expect((await pyyda("GET", `/api/hakemukset/${hakemus.id}`)).status).toBe(404);
+    expect((await pyyda("GET", `/api/paikat/${paikka.id}`)).status).toBe(404);
+    expect((await pyyda("DELETE", `/api/hakemukset/${hakemus.id}`)).status).toBe(404);
   });
 
   it("kielletty siirtymä palauttaa 409", async () => {

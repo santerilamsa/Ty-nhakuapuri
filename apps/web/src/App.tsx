@@ -45,6 +45,18 @@ export function App() {
     return s ? hakemukset.filter((h) => `${h.yritys} ${h.otsikko}`.toLowerCase().includes(s)) : hakemukset;
   }, [hakemukset, haku]);
 
+  async function poista(h: HakemusRivi) {
+    if (!window.confirm(`Poistetaanko "${h.yritys} – ${h.otsikko}" pysyvästi? Myös muistiinpanot ja historia poistuvat.`)) return;
+    try {
+      await api.poista(h.id);
+      if (valittu === h.id) setValittu(null);
+      setVirhe(null);
+    } catch (err) {
+      setVirhe(err instanceof Error ? err.message : String(err));
+    }
+    void lataa();
+  }
+
   function alkoi(e: DragStartEvent) {
     setVedettava(hakemukset.find((h) => h.id === e.active.id) ?? null);
   }
@@ -110,13 +122,22 @@ export function App() {
               hakemukset={suodatetut.filter((h) => h.tila === tila)}
               sallittu={!vedettava || vedettava.tila === tila || SALLITUT_SIIRTYMAT[vedettava.tila].includes(tila)}
               onValitse={setValittu}
+              onPoista={poista}
             />
           ))}
         </main>
         <DragOverlay>{vedettava && <Kortti hakemus={vedettava} ylapuolella />}</DragOverlay>
       </DndContext>
 
-      {valittu !== null && <Paneeli id={valittu} onSulje={() => setValittu(null)} onMuuttui={lataa} />}
+      {valittu !== null && <Paneeli
+          id={valittu}
+          onSulje={() => setValittu(null)}
+          onMuuttui={lataa}
+          onPoista={() => {
+            const h = hakemukset.find((x) => x.id === valittu);
+            if (h) void poista(h);
+          }}
+        />}
       {lisaaAuki && (
         <LisaaPaikka
           onSulje={() => setLisaaAuki(false)}

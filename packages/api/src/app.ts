@@ -11,6 +11,7 @@ import {
   luoHakemus,
   luoPaikka,
   muistutukset,
+  poistaHakemus,
   siirraTila,
   type Db,
 } from "@tyonhakuapuri/core";
@@ -139,6 +140,11 @@ export function luoApp(db: Db): Hono {
       );
     }
     return c.json(haeHakemus(db, hakemusId));
+  });
+
+  app.delete("/api/hakemukset/:id", (c) => {
+    poistaHakemus(db, jasenna(id, c.req.param("id")));
+    return c.body(null, 204);
   });
 
   app.post("/api/hakemukset/:id/muistiinpanot", async (c) => {

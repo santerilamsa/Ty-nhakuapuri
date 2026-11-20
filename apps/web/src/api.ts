@@ -93,6 +93,7 @@ async function pyyda<T>(polku: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: init?.body ? { "Content-Type": "application/json" } : undefined,
   });
+  if (vastaus.status === 204) return undefined as T;
   const data = await vastaus.json().catch(() => null);
   if (!vastaus.ok) throw new Error(data?.virhe ?? `Pyyntö epäonnistui (${vastaus.status})`);
   return data as T;
@@ -108,6 +109,7 @@ export const api = {
     pyyda<unknown>(`/api/hakemukset/${id}`, json("PATCH", muutos)),
   lisaaMuistiinpano: (id: number, teksti: string) =>
     pyyda<unknown>(`/api/hakemukset/${id}/muistiinpanot`, json("POST", { teksti })),
+  poista: (id: number) => pyyda<void>(`/api/hakemukset/${id}`, { method: "DELETE" }),
   muistutukset: () => pyyda<Muistutukset>("/api/muistutukset"),
   /** Luo paikan ja sille hakemuksen tilaan kiinnostaa. */
   async lisaaPaikka(syote: UusiPaikka): Promise<void> {

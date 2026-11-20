@@ -41,7 +41,7 @@ Näin liiketoimintalogiikka (tilasiirtymät, validointi) on yhdessä paikassa.
 |---|---|---|
 | Kieli | TypeScript kaikkialla | Yksi kieli, jaetut tyypit frontin ja backendin välillä |
 | MCP | `@modelcontextprotocol/sdk`, stdio-transport | Virallinen SDK, toimii suoraan Claude Desktop / Claude Code -clientien kanssa |
-| Tietokanta | SQLite (`better-sqlite3`) + Drizzle ORM | Ei erillistä palvelinta, yksi tiedosto, helppo varmuuskopioida |
+| Tietokanta | SQLite (`better-sqlite3`), pelkkä SQL (ei ORMia) | Ei erillistä palvelinta, yksi tiedosto; skeema on pieni, joten ORM ei tuo hyötyä |
 | REST API | Hono (tai Express) + Zod-validointi | Kevyt; Zod-skeemat uudelleenkäytetään MCP-työkalujen input-skeemoina |
 | Frontend | React + Vite + Tailwind, `dnd-kit` kanbanin vedä-ja-pudota | Yleinen stack, hyvä portfolioon |
 | Testit | Vitest | Samalla työkalulla core + API |
